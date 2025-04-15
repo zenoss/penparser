@@ -5,7 +5,11 @@ import io
 import json
 import os
 import sys
-import urllib2
+
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 
 try:
     import pathlib
@@ -35,7 +39,7 @@ def parse_pen_data():
         source = "file:{}".format(source)
 
     try:
-        instream = urllib2.urlopen(source)
+        instream = urlopen(source)
         iana_content = instream.read().decode(sys.getdefaultencoding())
         instream.close()
     except IOError:
