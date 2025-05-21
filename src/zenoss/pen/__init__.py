@@ -50,16 +50,18 @@ def parse_pen_data():
     pens = _parse_pens(iana_content)
     if stdout:
         _write(pens, sys.stdout)
+        print()
     else:
-        with io.open(pathname.as_posix(), "wb") as fo:
+        with io.open(pathname.as_posix(), "w") as fo:
             _write(pens, fo)
-
-    print("IANA Private Enterprise Number OID mapping written to file.")
-    print("  %s" % pathname)
+        print("IANA Private Enterprise Number OID mapping written to file.")
+        print("  %s" % pathname)
 
 
 def _write(pens, fp):
-    json.dump(pens, fp, ensure_ascii=False, indent=4, separators=(u",", u": "))
+    fp.write(
+        json.dumps(pens, ensure_ascii=False, indent=4, separators=(",", ": "))
+    )
 
 
 def _get_cli_args():
@@ -86,15 +88,15 @@ def _parse_pens(data):
 
     while True:
         try:
-            line = lines.next().strip()
+            line = next(lines).strip()
             if not line.isdigit():
                 continue
             number = int(line)
-            org = lines.next().strip()
+            org = next(lines).strip()
 
             # skip the 'contact' and 'email' lines
-            lines.next()
-            lines.next()
+            next(lines)
+            next(lines)
 
             if org in ("Unassigned", "Reserved", "none"):
                 continue
